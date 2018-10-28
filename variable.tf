@@ -42,5 +42,5 @@ variable "key_name" {
 }
 
 variable "user_data" {
-  default = "./script/userdata.sh"
+  default = "./scripts/userdata.sh"
 }
