@@ -38,7 +38,7 @@ variable "instance_type" {
 }
 
 variable "key_name" {
-  default = "ansible"
+  default = "my_demo_key"
 }
 
 variable "user_data" {
