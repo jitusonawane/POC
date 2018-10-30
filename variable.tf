@@ -5,7 +5,7 @@ variable "region" {
 
 variable "vpc_cidr" {
   description = "Enter your vpc_cidr"
-  default     = "10.20.0.0/16"
+  default     = "172.20.0.0/16"
 }
 
 variable "instance_tenancy" {
@@ -13,14 +13,14 @@ variable "instance_tenancy" {
   default     = "default"
 }
 
-variable "private_subnet_cidr" {
-  type    = "list"
-  default = ["10.20.0.0/24"]
-}
-
 variable "public_subnet_cidr" {
   type    = "list"
-  default = ["10.20.2.0/24"]
+  default = ["172.20.10.0/24"]
+}
+
+variable "private_subnet_cidr" {
+  type    = "list"
+  default = ["172.20.20.0/24"]
 }
 
 # configuring instance variables
@@ -38,9 +38,14 @@ variable "instance_type" {
 }
 
 variable "key_name" {
-  default = "my_demo_key"
+  default = "ansible"
 }
 
 variable "user_data" {
   default = "./scripts/userdata.sh"
+}
+
+#configuring app instance variable
+variable "app_instance_count" {
+  default = 1
 }

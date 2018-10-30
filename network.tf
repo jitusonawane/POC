@@ -45,7 +45,7 @@ resource "aws_internet_gateway" "app_igw" {
   }
 }
 
-# Configuring Route table
+# Configuring public Route table
 resource "aws_route_table" "public_route_table" {
   vpc_id = "${aws_vpc.app_vpc.id}"
 
@@ -59,9 +59,45 @@ resource "aws_route_table" "public_route_table" {
   }
 }
 
-# Configuring Route Table association
-resource "aws_route_table_association" "sub_route_asso" {
+#Configure private route table
+resource "aws_route_table" "private_route_table" {
+  vpc_id = "${aws_vpc.app_vpc.id}"
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = "${aws_nat_gateway.app_nat_gw.id}"
+  }
+
+  tags {
+    Name = "private_route_table"
+  }
+}
+
+# Configuring public Route Table association
+resource "aws_route_table_association" "pub_sub_route_asso" {
   count          = "${length(var.public_subnet_cidr)}"
   subnet_id      = "${aws_subnet.public_subnet.*.id[count.index]}"
   route_table_id = "${aws_route_table.public_route_table.id}"
+}
+
+# Configuring private route table association
+resource "aws_route_table_association" "pri_sub_route_asso" {
+  count          = "${length(var.private_subnet_cidr)}"
+  subnet_id      = "${aws_subnet.private_subnet.*.id[count.index]}"
+  route_table_id = "${aws_route_table.private_route_table.id}"
+}
+
+#Configuring elastic ip
+resource "aws_eip" "natgateway_eip" {
+  vpc = true
+}
+
+#configuring NAT gateway
+resource "aws_nat_gateway" "app_nat_gw" {
+  allocation_id = "${aws_eip.natgateway_eip.id}"
+  subnet_id     = "${aws_subnet.public_subnet.id}"
+
+  tags {
+    Name = "NAT_gateway"
+  }
 }
